@@ -74,9 +74,6 @@ export class AppState {
   addToCartino(ctx: StateContext<App>, action: AddToCart) {
     const state = ctx.getState();
 
-    console.log("Old state is:");
-    console.log(ctx.getState());
-
     // Find item (and more specifically, its quantity) of that type that is already in the cart
     const { quantity = 0 } =
       state.cart.find((x) => x.name === action.payload) || {};
@@ -96,9 +93,6 @@ export class AppState {
       ...state,
       cart: newCart,
     });
-
-    console.log("New state is:");
-    console.log(ctx.getState());
   }
 
   @Action(RemoveCartItem)

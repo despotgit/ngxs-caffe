@@ -37,6 +37,11 @@ export class RemoveOneCartItem {
   constructor(public payload: string) {}
 }
 
+export class Checkout {
+  static readonly type = "[Total price link] CHECKOUT";
+  constructor() {}
+}
+
 export class EmptyCart {
   static readonly type = "[Pay Component] EMPTY_CART";
   constructor() {}
@@ -47,10 +52,4 @@ export class EmptyCart {
 export class AddToCoffeeMenu {
   static readonly type = "[Remix Page] ADD_TO_COFFEE_LIST";
   constructor(public payload: Coffee[]) {}
-}
-
-// TODO: dummy for unit testing purpose
-export class DummySetState {
-  static readonly type = "DUMMY_SET_STATE";
-  constructor(public payload: App) {}
 }

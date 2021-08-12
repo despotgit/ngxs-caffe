@@ -12,8 +12,8 @@ import {
   EmptyCart,
   AddToCoffeeMenu,
   GetCoffeeMenu,
-  DummySetState,
   AddOneCartItem,
+  Checkout,
 } from "./app.actions";
 
 import { CoffeeService } from "../services/coffee.service";
@@ -130,17 +130,25 @@ export class AppState {
     });
   }
 
+  @Action(Checkout)
+  checkout(ctx: StateContext<App>) {
+    let state = ctx.getState();
+    alert("in checkout, total is: " + AppState.totalCartAmount(state));
+
+    //@Select(AppState.totalCartAmount) total$;
+  }
+
   @Action(EmptyCart)
-  emptyCart(ctx: StateContext<App>, action: EmptyCart) {
+  emptyCart(ctx: StateContext<App>) {
     const state = ctx.getState();
 
-    const current = {
+    const newCart = {
       cart: [],
     };
 
     ctx.setState({
       ...state,
-      ...current,
+      ...newCart,
     });
   }
 
@@ -150,20 +158,6 @@ export class AppState {
 
     const current = {
       coffeeMenu: [...state.coffeeMenu, ...action.payload],
-    };
-
-    ctx.setState({
-      ...state,
-      ...current,
-    });
-  }
-
-  @Action(DummySetState)
-  dummySetState(ctx: StateContext<App>, action: DummySetState) {
-    const state = ctx.getState();
-
-    const current = {
-      ...action.payload,
     };
 
     ctx.setState({

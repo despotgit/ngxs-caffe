@@ -3,7 +3,7 @@ import { map } from "rxjs/operators";
 import { combineLatest } from "rxjs";
 import { Store, Select } from "@ngxs/store";
 import { Router } from "@angular/router";
-import { EmptyCart } from "../../state/app.actions";
+import { Checkout, EmptyCart } from "../../state/app.actions";
 import { AppState } from "../../state/app.state";
 
 @Component({
@@ -29,6 +29,8 @@ export class PayComponent implements OnInit {
 
   pay() {
     alert("Yay, order placed. Start a new order!");
+
+    this.store.dispatch(new Checkout());
     this.store.dispatch(new EmptyCart());
     this.router.navigateByUrl("/menu");
   }

@@ -54,7 +54,8 @@ export class AppState {
   }
 
   @Action(GetCoffeeList)
-  async getCoffeeList(ctx: StateContext<App>, action: GetCoffeeList) {
+  async getCoffeeList(ctx: StateContext<App>) {
+    console.log("in getCoffeeList");
     try {
       const coffeeList = await this.coffeeSvc.getList();
 
@@ -72,6 +73,11 @@ export class AppState {
   @Action([AddToCart, AddOneCartItem])
   addToCart(ctx: StateContext<App>, action: AddToCart) {
     const state = ctx.getState();
+
+    //let a = { farog: null, b: 3 };
+    //const { farog = 0 } = a;
+    //console.log("neki farog:");
+    //console.log(farog);
 
     // find cart item by item name
     const { quantity = 0 } =

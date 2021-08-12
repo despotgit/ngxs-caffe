@@ -1,38 +1,39 @@
-import { Component, OnInit } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
+import { Component, OnInit } from "@angular/core";
+import { Store, Select } from "@ngxs/store";
 
-import { Router } from '@angular/router';
-import { environment } from '../../../environments/environment';
-import { GetCoffeeList, AddToCart } from '../../state/app.actions';
-import { AppState } from '../../state/app.state';
-
+import { Router } from "@angular/router";
+import { environment } from "../../../environments/environment";
+import { GetCoffeeMenu, AddToCart } from "../../state/app.actions";
+import { AppState } from "../../state/app.state";
 
 @Component({
-  selector: 'app-list-page',
-  templateUrl: './list-page.component.html',
-  styleUrls: ['./list-page.component.css']
+  selector: "app-list-page",
+  templateUrl: "./list-page.component.html",
+  styleUrls: ["./list-page.component.css"],
 })
 export class ListPageComponent implements OnInit {
-
-  // @Select((state: App) => state.app.coffeeList)
-  @Select(AppState.coffeeList)
+  // @Select((state: App) => state.app.coffeeMenu)
+  @Select(AppState.coffeeMenu)
   list$;
 
   isFeatureRemixOn = environment.features.remix;
 
-  constructor(private router: Router, private store: Store) { }
+  constructor(private router: Router, private store: Store) {}
 
   ngOnInit() {
-    const isListPopulated = this.store.selectSnapshot<App>(x => x.app.coffeeList.length);
-    if (isListPopulated) { return; }
-    this.store.dispatch(new GetCoffeeList());
+    const isListPopulated = this.store.selectSnapshot<App>(
+      (x) => x.app.coffeeMenu.length
+    );
+    if (isListPopulated) {
+      return;
+    }
+    this.store.dispatch(new GetCoffeeMenu());
 
-    // this.store.selectOnce(x => x.app.coffeeList.length)
+    // this.store.selectOnce(x => x.app.coffeeMenu.length)
     //   .subscribe(x => {
     //     if (x) { return; }
-    //     this.store.dispatch(new GetCoffeeList());
+    //     this.store.dispatch(new GetCoffeeMenu());
     //   });
-
   }
 
   addToCart(name: string) {
@@ -41,6 +42,6 @@ export class ListPageComponent implements OnInit {
 
   addToCartAndCheckout(name: string) {
     this.addToCart(name);
-    this.router.navigateByUrl('/cart');
+    this.router.navigateByUrl("/cart");
   }
 }

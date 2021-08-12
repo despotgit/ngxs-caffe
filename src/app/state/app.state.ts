@@ -4,14 +4,14 @@ import { mergeMap, catchError, take, tap } from "rxjs/operators";
 import { of } from "rxjs";
 
 import {
-  GetCoffeeListSuccess,
-  GetCoffeeListFailed,
+  GetCoffeeMenuSuccess,
+  GetCoffeeMenuFailed,
   AddToCart,
   RemoveCartItem,
   RemoveOneCartItem,
   EmptyCart,
-  AddToCoffeeList,
-  GetCoffeeList,
+  AddToCoffeeMenu,
+  GetCoffeeMenu,
   DummySetState,
   AddOneCartItem,
 } from "./app.actions";
@@ -19,7 +19,7 @@ import {
 import { CoffeeService } from "../services/coffee.service";
 
 export const getAppInitialState = (): App => ({
-  coffeeList: [],
+  coffeeMenu: [],
   cart: [],
 });
 
@@ -31,14 +31,14 @@ export class AppState {
   constructor(private coffeeSvc: CoffeeService) {}
 
   @Selector()
-  static coffeeList(state: App) {
-    return state.coffeeList;
+  static coffeeMenu(state: App) {
+    return state.coffeeMenu;
   }
 
   @Selector()
   static totalCartAmount(state: App) {
     const priceList = state.cart.map((c) => {
-      const unitPrice = state.coffeeList.find((x) => x.name === c.name).price;
+      const unitPrice = state.coffeeMenu.find((x) => x.name === c.name).price;
       return unitPrice * c.quantity;
     });
     const sum = priceList.reduce((acc, curr) => acc + curr, 0);
@@ -53,50 +53,52 @@ export class AppState {
     return total;
   }
 
-  @Action(GetCoffeeList)
-  async getCoffeeList(ctx: StateContext<App>) {
-    console.log("in getCoffeeList");
+  @Action(GetCoffeeMenu)
+  async getCoffeeMenu(ctx: StateContext<App>) {
+    console.log("in getCoffeeMenu");
     try {
-      const coffeeList = await this.coffeeSvc.getList();
+      const coffeeMenu = await this.coffeeSvc.getList();
 
       const state = ctx.getState();
 
       ctx.setState({
         ...state,
-        coffeeList,
+        coffeeMenu,
       });
     } catch (error) {
-      ctx.dispatch(new GetCoffeeListFailed(error));
+      ctx.dispatch(new GetCoffeeMenuFailed(error));
     }
   }
 
   @Action([AddToCart, AddOneCartItem])
-  addToCart(ctx: StateContext<App>, action: AddToCart) {
+  addToCartino(ctx: StateContext<App>, action: AddToCart) {
     const state = ctx.getState();
 
-    //let a = { farog: null, b: 3 };
-    //const { farog = 0 } = a;
-    //console.log("neki farog:");
-    //console.log(farog);
+    console.log("Old state is:");
+    console.log(ctx.getState());
 
-    // find cart item by item name
+    // Find item (and more specifically, its quantity) of that type that is already in the cart
     const { quantity = 0 } =
       state.cart.find((x) => x.name === action.payload) || {};
 
-    const current = {
-      cart: [
-        ...state.cart.filter((x) => x.name !== action.payload),
-        {
-          name: action.payload,
-          quantity: quantity + 1,
-        },
-      ],
-    };
+    let incrementedQuantity = quantity + 1;
+
+    // Form the new cart. Leave other items as-is, increment the quantity of the item in question
+    const newCart = [
+      ...state.cart.filter((x) => x.name !== action.payload), // leave others untouched
+      {
+        name: action.payload,
+        quantity: incrementedQuantity, // increment only this one
+      },
+    ];
 
     ctx.setState({
       ...state,
-      ...current,
+      cart: newCart,
     });
+
+    console.log("New state is:");
+    console.log(ctx.getState());
   }
 
   @Action(RemoveCartItem)
@@ -148,12 +150,12 @@ export class AppState {
     });
   }
 
-  @Action(AddToCoffeeList)
-  addToCoffeeList(ctx: StateContext<App>, action: AddToCoffeeList) {
+  @Action(AddToCoffeeMenu)
+  addToCoffeeMenu(ctx: StateContext<App>, action: AddToCoffeeMenu) {
     const state = ctx.getState();
 
     const current = {
-      coffeeList: [...state.coffeeList, ...action.payload],
+      coffeeMenu: [...state.coffeeMenu, ...action.payload],
     };
 
     ctx.setState({
